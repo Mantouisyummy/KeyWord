@@ -133,9 +133,7 @@ class ReplySystem(commands.Cog):
                         json.dump(data, f, ensure_ascii=False, indent=4)
                     text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(
-                            title="移除成功!", description=f"已移除 `{text}`"
-                        )
+                        embed=SuccessEmbed(title="移除成功!", description=f"已移除 `{text}`")
                     )
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
@@ -212,7 +210,9 @@ class ReplySystem(commands.Cog):
             ),
         ],
     )
-    async def modify(self, interaction: ApplicationCommandInteraction, keyword: str, reply:str):
+    async def modify(
+        self, interaction: ApplicationCommandInteraction, keyword: str, reply: str
+    ):
         if os.path.isfile(f"./guild/{interaction.guild_id}.json"):
             with open(
                 f"./guild/{interaction.guild_id}.json", mode="r", encoding="utf-8"
@@ -230,7 +230,9 @@ class ReplySystem(commands.Cog):
                         json.dump(data, f, ensure_ascii=False, indent=4)
                     text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
+                        embed=SuccessEmbed(
+                            title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}"
+                        )
                     )
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
@@ -247,7 +249,9 @@ class ReplySystem(commands.Cog):
                         json.dump(data, f, ensure_ascii=False, indent=4)
                     text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
+                        embed=SuccessEmbed(
+                            title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}"
+                        )
                     )
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
@@ -255,7 +259,7 @@ class ReplySystem(commands.Cog):
             return await interaction.response.send_message(
                 embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
             )
-    
+
     @modify.autocomplete("keyword")
     async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
         choices = []
@@ -281,7 +285,7 @@ class ReplySystem(commands.Cog):
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
         return []
-    
+
     @commands.Cog.listener(name="on_slash_command_error")
     async def on_slash_command_error(
         self, interaction: ApplicationCommandInteraction, error
