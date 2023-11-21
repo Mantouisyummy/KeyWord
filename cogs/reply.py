@@ -121,30 +121,28 @@ class ReplySystem(commands.Cog):
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
                 )
-            else:
-                number = self.extract_id_text(keyword)[1]
-                if number == interaction.user.id:
-                    if data.get(keyword, None) is not None:
-                        del data[keyword]
-                        with open(
-                            f"./guild/{interaction.guild_id}.json",
-                            mode="w",
-                            encoding="utf-8",
-                        ) as f:
-                            json.dump(data, f, ensure_ascii=False, indent=4)
-                        text = self.extract_id_text(keyword)[0]
-                        return await interaction.response.send_message(
-                            embed=SuccessEmbed(
-                                title="移除成功!", description=f"已移除 `{text}`"
-                            )
+            number = self.extract_id_text(keyword)[1]
+            if number == interaction.user.id:
+                if data.get(keyword, None) is not None:
+                    del data[keyword]
+                    with open(
+                        f"./guild/{interaction.guild_id}.json",
+                        mode="w",
+                        encoding="utf-8",
+                    ) as f:
+                        json.dump(data, f, ensure_ascii=False, indent=4)
+                    text = self.extract_id_text(keyword)[0]
+                    return await interaction.response.send_message(
+                        embed=SuccessEmbed(
+                            title="移除成功!", description=f"已移除 `{text}`"
                         )
-                    return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
                     )
-                else:
-                    return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="你不能刪除別人的關鍵詞!"), ephemeral=True
-                    )
+                return await interaction.response.send_message(
+                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                )
+            return await interaction.response.send_message(
+                embed=ErrorEmbed(title="你不能刪除別人的關鍵詞!"), ephemeral=True
+            )
 
     @remove.autocomplete("keyword")
     async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
@@ -237,28 +235,26 @@ class ReplySystem(commands.Cog):
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
                 )
-            else:
-                number = self.extract_id_text(keyword)[1]
-                if number == interaction.user.id:
-                    if data.get(keyword, None) is not None:
-                        del data[keyword]
-                        with open(
-                            f"./guild/{interaction.guild_id}.json",
-                            mode="w",
-                            encoding="utf-8",
-                        ) as f:
-                            json.dump(data, f, ensure_ascii=False, indent=4)
-                        text = self.extract_id_text(keyword)[0]
-                        return await interaction.response.send_message(
-                            embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
-                        )
+            number = self.extract_id_text(keyword)[1]
+            if number == interaction.user.id:
+                if data.get(keyword, None) is not None:
+                    del data[keyword]
+                    with open(
+                        f"./guild/{interaction.guild_id}.json",
+                        mode="w",
+                        encoding="utf-8",
+                    ) as f:
+                        json.dump(data, f, ensure_ascii=False, indent=4)
+                    text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                        embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
                     )
-                else:
-                    return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
-                    )
+                return await interaction.response.send_message(
+                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                )
+            return await interaction.response.send_message(
+                embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
+            )
     
     @modify.autocomplete("keyword")
     async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
