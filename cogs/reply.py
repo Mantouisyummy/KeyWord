@@ -29,8 +29,7 @@ class ReplySystem(commands.Cog):
             text = key[:underline]
             number = int(key[underline + 1 :])
             return text, number
-        else:
-            return key, None
+        return key, None
 
     @commands.slash_command(name="回復", description="just a test")
     async def reply(self, interaction: ApplicationCommandInteraction):
@@ -119,10 +118,9 @@ class ReplySystem(commands.Cog):
                     return await interaction.response.send_message(
                         embed=SuccessEmbed(title="移除成功!", description=f"已移除 `{text}`")
                     )
-                else:
-                    return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                    )
+                return await interaction.response.send_message(
+                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                )
             else:
                 number = self.extract_id_text(keyword)[1]
                 if number == interaction.user.id:
@@ -140,10 +138,9 @@ class ReplySystem(commands.Cog):
                                 title="移除成功!", description=f"已移除 `{text}`"
                             )
                         )
-                    else:
-                        return await interaction.response.send_message(
-                            embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                        )
+                    return await interaction.response.send_message(
+                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                    )
                 else:
                     return await interaction.response.send_message(
                         embed=ErrorEmbed(title="你不能刪除別人的關鍵詞!"), ephemeral=True
@@ -166,8 +163,7 @@ class ReplySystem(commands.Cog):
                 if keyword in key:
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
-        else:
-            return []
+        return []
 
     @reply.sub_command(name="清單", description="查看已有的關鍵詞清單")
     async def replylist(self, interaction: ApplicationCommandInteraction):
@@ -238,10 +234,9 @@ class ReplySystem(commands.Cog):
                     return await interaction.response.send_message(
                         embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
                     )
-                else:
-                    return await interaction.response.send_message(
-                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                    )
+                return await interaction.response.send_message(
+                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                )
             else:
                 number = self.extract_id_text(keyword)[1]
                 if number == interaction.user.id:
@@ -257,10 +252,9 @@ class ReplySystem(commands.Cog):
                         return await interaction.response.send_message(
                             embed=SuccessEmbed(title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}")
                         )
-                    else:
-                        return await interaction.response.send_message(
-                            embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                        )
+                    return await interaction.response.send_message(
+                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                    )
                 else:
                     return await interaction.response.send_message(
                         embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
@@ -290,8 +284,7 @@ class ReplySystem(commands.Cog):
                 if keyword in key:
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
-        else:
-            return []
+        return []
     
     @commands.Cog.listener(name="on_slash_command_error")
     async def on_slash_command_error(
