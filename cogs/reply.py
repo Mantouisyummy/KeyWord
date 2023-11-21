@@ -261,7 +261,7 @@ class ReplySystem(commands.Cog):
             )
 
     @modify.autocomplete("keyword")
-    async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
+    async def modify_search(self, interaction: ApplicationCommandInteraction, keyword: str):
         choices = []
         if not keyword:
             with open(
