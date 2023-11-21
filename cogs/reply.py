@@ -8,9 +8,9 @@ from disnake import (
 )
 from disnake.ext import commands
 
-from lava.bot import Bot
-from lava.embeds import SuccessEmbed, ErrorEmbed, InfoEmbed
-from lava.paginator import Paginator
+from core.bot import Bot
+from core.embeds import SuccessEmbed, ErrorEmbed, InfoEmbed
+from core.paginator import Paginator
 
 import json
 import os
@@ -268,6 +268,7 @@ class ReplySystem(commands.Cog):
     
     @modify.autocomplete("keyword")
     async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
+        choices = []
         if not keyword:
             with open(
                 f"./guild/{interaction.guild_id}.json", mode="r", encoding="utf-8"
