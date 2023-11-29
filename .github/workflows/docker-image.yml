@@ -16,7 +16,7 @@ jobs:
         run: docker build . --file Dockerfile -t ghcr.io/mantou1031/keyword:latest
 
       - name: Login to GitHub Registry
-        run: echo "${{ secrets.DOCKER_GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+        run: docker login -u mantou1031 -p ${{ secrets.DOCKER_GITHUB_TOKEN }}
 
       - name: Push to GitHub Registry
         run: docker push ghcr.io/mantou1031/keyword:latest
