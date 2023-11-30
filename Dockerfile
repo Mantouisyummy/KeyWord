@@ -1,8 +1,8 @@
 FROM python:3.11.5-slim
 
-RUN mkdir -p /usr/src/bot
+RUN mkdir -p /keyword
 
-WORKDIR /usr/src/bot
+WORKDIR /keyword
 
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt

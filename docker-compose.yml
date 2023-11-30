@@ -5,4 +5,4 @@ services:
     restart: always
     env_file:
       - .env
-    volumes: -:/usr/src/bot
+    volumes: -:/keyword
