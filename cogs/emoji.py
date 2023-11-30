@@ -1,8 +1,9 @@
 from disnake import ApplicationCommandInteraction, Option, OptionType, PartialEmoji, ButtonStyle
 from disnake.ext import commands
 from disnake.ui import Button
-from core.bot import Bot
-from core.embeds import SuccessEmbed, ErrorEmbed
+
+from lava.bot import Bot
+from lava.embeds import SuccessEmbed, ErrorEmbed
 
 
 class GetEmoji(commands.Cog):
