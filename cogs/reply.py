@@ -8,9 +8,9 @@ from disnake import (
 )
 from disnake.ext import commands
 
-from lava.bot import Bot
-from lava.embeds import SuccessEmbed, ErrorEmbed, InfoEmbed
-from lava.paginator import Paginator
+from core.bot import Bot
+from core.embeds import SuccessEmbed, ErrorEmbed, InfoEmbed
+from core.paginator import Paginator
 
 import json
 import os
