@@ -31,4 +31,4 @@ WORKDIR /keyword
 
 ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
 
-CMD [ "python", "main.py" ]
+CMD [ "main.py" ]
