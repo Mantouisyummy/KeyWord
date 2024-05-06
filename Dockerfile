@@ -27,8 +27,6 @@ COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3
 
 COPY --from=build /keyword /keyword
 
-ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
-
 WORKDIR /keyword
 
 CMD [ "main.py" ]
