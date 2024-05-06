@@ -23,7 +23,8 @@ RUN set -ex \
 
 FROM gcr.io/distroless/python3
 
-COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build /usr/local/bin/python3.11 /usr/local/bin/python3.11
+COPY --from=build /usr/local/lib/python3.11 /usr/local/lib/python3.11
 
 COPY --from=build /keyword /keyword
 
