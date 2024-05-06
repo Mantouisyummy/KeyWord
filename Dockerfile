@@ -6,13 +6,9 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_NO_CACHE_DIR=1
 
 RUN mkdir -p /keyword
-COPY . ./keyword
-
-FROM gcr.io/distroless/python3
+COPY . /keyword
 
 WORKDIR /keyword
-
-COPY --from=build /keyword/requirements.txt .
 
 RUN set -ex \
     && addgroup --system --gid 1001 appgroup \
@@ -24,5 +20,11 @@ RUN set -ex \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/.cache/pip/*
+
+FROM gcr.io/distroless/python3
+
+COPY --from=build /keyword /keyword
+
+WORKDIR /keyword
 
 CMD [ "python3", "main.py" ]
