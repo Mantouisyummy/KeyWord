@@ -21,7 +21,7 @@ RUN set -ex \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/.cache/pip/*
 
-FROM gcr.io/distroless/python3-debian10
+FROM gcr.io/distroless/python3
 
 COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 
