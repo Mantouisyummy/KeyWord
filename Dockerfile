@@ -27,7 +27,7 @@ COPY --from=build /keyword /keyword
 
 COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 
-WORKDIR /keyword
+WORKDIR keyword
 
 ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
 
