@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 from disnake import ApplicationCommandInteraction, Option, OptionType, PartialEmoji, ButtonStyle
 from disnake.ext import commands
 from disnake.ui import Button

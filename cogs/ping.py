@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 import disnake
 from disnake.ext import commands
 from disnake import ApplicationCommandInteraction

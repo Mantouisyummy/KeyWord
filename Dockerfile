@@ -23,12 +23,12 @@ RUN set -ex \
 
 FROM gcr.io/distroless/python3
 
-COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-
 COPY --from=build /keyword /keyword
+
+COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 
 WORKDIR /keyword
 
 ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
 
-CMD [ "main.py" ]
+CMD ["/usr/bin/python3.11", "/keyword/main.py"]
