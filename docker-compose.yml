@@ -1,8 +1,16 @@
 version: '3.9'
 services:
   bot:
-    build: .
+    image: ghcr.io/mantouisyummy/keyword:latest
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     env_file:
       - .env
     volumes: -:/keyword
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 5 --cleanup
