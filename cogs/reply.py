@@ -29,7 +29,8 @@ class ReplySystem(commands.Cog):
             text = key[:underline]
             number = int(key[underline + 1 :])
             return text, number
-        return key, None
+        else:
+            return key, None
 
     @commands.slash_command(name="回復", description="just a test")
     async def reply(self, interaction: ApplicationCommandInteraction):
@@ -51,10 +52,23 @@ class ReplySystem(commands.Cog):
                 type=OptionType.string,
                 required=True,
             ),
+            Option(
+                name="ephemeral",
+                description="是否讓訊息僅限自己能看到",
+                type=OptionType.boolean,
+                choices=[
+                    OptionChoice(name="是", value=True),
+                    OptionChoice(name="否", value=False),
+                ],
+            ),
         ],
     )
     async def add(
-        self, interaction: ApplicationCommandInteraction, keyword: str, reply: str
+        self,
+        interaction: ApplicationCommandInteraction,
+        keyword: str,
+        reply: str,
+        ephemeral: bool = True,
     ):
         if os.path.isfile(f"./guild/{interaction.guild_id}.json"):
             with open(
@@ -83,7 +97,8 @@ class ReplySystem(commands.Cog):
         return await interaction.response.send_message(
             embed=SuccessEmbed(
                 title="新增成功!", description=f"已新增 `{keyword}` -> `{reply}`!"
-            )
+            ),
+            ephemeral=ephemeral,
         )
 
     @reply.sub_command(
@@ -96,9 +111,23 @@ class ReplySystem(commands.Cog):
                 type=OptionType.string,
                 required=True,
             ),
+            Option(
+                name="ephemeral",
+                description="是否讓訊息僅限自己能看到",
+                type=OptionType.boolean,
+                choices=[
+                    OptionChoice(name="是", value=True),
+                    OptionChoice(name="否", value=False),
+                ],
+            ),
         ],
     )
-    async def remove(self, interaction: ApplicationCommandInteraction, keyword: str):
+    async def remove(
+        self,
+        interaction: ApplicationCommandInteraction,
+        keyword: str,
+        ephemeral: bool = True,
+    ):
         if os.path.isfile(f"./guild/{interaction.guild_id}.json"):
             with open(
                 f"./guild/{interaction.guild_id}.json", mode="r", encoding="utf-8"
@@ -116,31 +145,39 @@ class ReplySystem(commands.Cog):
                         json.dump(data, f, ensure_ascii=False, indent=4)
                     text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(title="移除成功!", description=f"已移除 `{text}`")
+                        embed=SuccessEmbed(title="移除成功!", description=f"已移除 `{text}`"),
+                        ephemeral=ephemeral,
                     )
-                return await interaction.response.send_message(
-                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                )
-            number = self.extract_id_text(keyword)[1]
-            if number == interaction.user.id:
-                if data.get(keyword, None) is not None:
-                    del data[keyword]
-                    with open(
-                        f"./guild/{interaction.guild_id}.json",
-                        mode="w",
-                        encoding="utf-8",
-                    ) as f:
-                        json.dump(data, f, ensure_ascii=False, indent=4)
-                    text = self.extract_id_text(keyword)[0]
+                else:
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(title="移除成功!", description=f"已移除 `{text}`")
+                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
                     )
-                return await interaction.response.send_message(
-                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                )
-            return await interaction.response.send_message(
-                embed=ErrorEmbed(title="你不能刪除別人的關鍵詞!"), ephemeral=True
-            )
+            else:
+                number = self.extract_id_text(keyword)[1]
+                if number == interaction.user.id:
+                    if data.get(keyword, None) is not None:
+                        del data[keyword]
+                        with open(
+                            f"./guild/{interaction.guild_id}.json",
+                            mode="w",
+                            encoding="utf-8",
+                        ) as f:
+                            json.dump(data, f, ensure_ascii=False, indent=4)
+                        text = self.extract_id_text(keyword)[0]
+                        return await interaction.response.send_message(
+                            embed=SuccessEmbed(
+                                title="移除成功!", description=f"已移除 `{text}`"
+                            ),
+                            ephemeral=ephemeral,
+                        )
+                    else:
+                        return await interaction.response.send_message(
+                            embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                        )
+                else:
+                    return await interaction.response.send_message(
+                        embed=ErrorEmbed(title="你不能刪除別人的關鍵詞!"), ephemeral=True
+                    )
 
     @remove.autocomplete("keyword")
     async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
@@ -159,10 +196,27 @@ class ReplySystem(commands.Cog):
                 if keyword in key:
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
-        return []
+        else:
+            return []
 
-    @reply.sub_command(name="清單", description="查看已有的關鍵詞清單")
-    async def replylist(self, interaction: ApplicationCommandInteraction):
+    @reply.sub_command(
+        name="清單",
+        description="查看已有的關鍵詞清單",
+        options=[
+            Option(
+                name="ephemeral",
+                description="是否讓訊息僅限自己能看到",
+                type=OptionType.boolean,
+                choices=[
+                    OptionChoice(name="是", value=True),
+                    OptionChoice(name="否", value=False),
+                ],
+            )
+        ],
+    )
+    async def replylist(
+        self, interaction: ApplicationCommandInteraction, ephemeral: bool = True
+    ):
         if os.path.isfile(f"./guild/{interaction.guild_id}.json"):
             with open(
                 f"./guild/{interaction.guild_id}.json", mode="r", encoding="utf-8"
@@ -186,7 +240,9 @@ class ReplySystem(commands.Cog):
                             )
                         )
 
-                await Paginator(timeout=None).start(interaction, pages=pages)
+                await Paginator(timeout=None, ephemeral=ephemeral).start(
+                    interaction, pages=pages
+                )
             else:
                 return await interaction.response.send_message(
                     embed=ErrorEmbed(title="你的群組還沒有設定過"), ephemeral=True
@@ -208,10 +264,23 @@ class ReplySystem(commands.Cog):
                 type=OptionType.string,
                 required=True,
             ),
+            Option(
+                name="ephemeral",
+                description="是否讓訊息僅限自己能看到",
+                type=OptionType.boolean,
+                choices=[
+                    OptionChoice(name="是", value=True),
+                    OptionChoice(name="否", value=False),
+                ],
+            ),
         ],
     )
     async def modify(
-        self, interaction: ApplicationCommandInteraction, keyword: str, reply: str
+        self,
+        interaction: ApplicationCommandInteraction,
+        keyword: str,
+        reply: str,
+        ephemeral: bool = True,
     ):
         if os.path.isfile(f"./guild/{interaction.guild_id}.json"):
             with open(
@@ -231,37 +300,43 @@ class ReplySystem(commands.Cog):
                     text = self.extract_id_text(keyword)[0]
                     return await interaction.response.send_message(
                         embed=SuccessEmbed(
-                            title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}"
-                        )
+                            title="變更成功!", description=f"已變更 `{text}` 回復詞為 `{reply}`!"
+                        ),
+                        ephemeral=ephemeral,
                     )
-                return await interaction.response.send_message(
-                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                )
-            number = self.extract_id_text(keyword)[1]
-            if number == interaction.user.id:
-                if data.get(keyword, None) is not None:
-                    del data[keyword]
-                    with open(
-                        f"./guild/{interaction.guild_id}.json",
-                        mode="w",
-                        encoding="utf-8",
-                    ) as f:
-                        json.dump(data, f, ensure_ascii=False, indent=4)
-                    text = self.extract_id_text(keyword)[0]
+                else:
                     return await interaction.response.send_message(
-                        embed=SuccessEmbed(
-                            title="變更成功!", description=f"已變更 `{text}` 回復詞為 {reply}"
-                        )
+                        embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
                     )
-                return await interaction.response.send_message(
-                    embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
-                )
-            return await interaction.response.send_message(
-                embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
-            )
+            else:
+                number = self.extract_id_text(keyword)[1]
+                if number == interaction.user.id:
+                    if data.get(keyword, None) is not None:
+                        data[keyword] = reply
+                        with open(
+                            f"./guild/{interaction.guild_id}.json",
+                            mode="w",
+                            encoding="utf-8",
+                        ) as f:
+                            json.dump(data, f, ensure_ascii=False, indent=4)
+                        text = self.extract_id_text(keyword)[0]
+                        return await interaction.response.send_message(
+                            embed=SuccessEmbed(
+                                title="變更成功!",
+                                description=f"已變更 `{text}` 回復詞為 `{reply}`!",
+                            )
+                        )
+                    else:
+                        return await interaction.response.send_message(
+                            embed=ErrorEmbed(title="沒有這個關鍵詞!"), ephemeral=True
+                        )
+                else:
+                    return await interaction.response.send_message(
+                        embed=ErrorEmbed(title="你不能變更別人的關鍵詞!"), ephemeral=True
+                    )
 
     @modify.autocomplete("keyword")
-    async def modify_search(self, interaction: ApplicationCommandInteraction, keyword: str):
+    async def search(self, interaction: ApplicationCommandInteraction, keyword: str):
         choices = []
         if not keyword:
             with open(
@@ -269,8 +344,8 @@ class ReplySystem(commands.Cog):
             ) as f:
                 data: dict = json.load(f)
             for key, value in data.items():
-                text = self.extract_id_text(key)[0]
-                if keyword in key:
+                text, number = self.extract_id_text(key)
+                if keyword in key and interaction.author.id == number:
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
 
@@ -280,11 +355,12 @@ class ReplySystem(commands.Cog):
             ) as f:
                 data: dict = json.load(f)
             for key, value in data.items():
-                text = self.extract_id_text(key)[0]
-                if keyword in key:
+                text, number = self.extract_id_text(key)
+                if keyword in key and interaction.author.id == number:
                     choices.append(OptionChoice(name=f"{text} 回覆詞為 {value}", value=key))
             return choices
-        return []
+        else:
+            return []
 
     @commands.Cog.listener(name="on_slash_command_error")
     async def on_slash_command_error(
