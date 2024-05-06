@@ -1,4 +1,3 @@
-# 首先，使用 multi-stage build 來減少最終映像的大小
 FROM python:3.11.5-slim as build
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
@@ -10,18 +9,18 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
 RUN mkdir -p /keyword
 WORKDIR /keyword
 
-# 安裝 Poetry 並安裝依賴
+
 COPY pyproject.toml poetry.lock ./
 RUN pip install "poetry==$POETRY_VERSION" \
     && poetry install --no-root --no-ansi --no-interaction \
     && poetry export -f requirements.txt -o requirements.txt
 
-# 最終階段
+
 FROM python:3.11.5-slim as Final
 
 WORKDIR /keyword
 
-# 複製依賴並安裝
+
 COPY --from=build /keyword/requirements.txt .
 RUN set -ex \
     && addgroup --system --gid 1001 appgroup \
@@ -35,7 +34,7 @@ RUN set -ex \
     && rm requirements.txt \
     && rm -rf /root/.cache/pip/*
 
-# 複製程式碼並設置運行命令
+
 COPY .env .env
 COPY /guild /guild
 COPY . .

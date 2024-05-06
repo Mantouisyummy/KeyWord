@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile -t ghcr.io/mantou-9487/keyword:latest
+
+      - name: Login to GitHub Registry
+        run: echo "${{ secrets.DOCKER_GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Push to GitHub Registry
+        run: docker push ghcr.io/mantou-9487/keyword:latest
